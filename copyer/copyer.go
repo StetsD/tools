@@ -14,12 +14,19 @@ func init() {
 	flag.Parse()
 }
 
-func copy(src, dest string) (int64, error) {
-	_, err := validator(src, dest)
+func Copy(src, dest string) (int64, error) {
 
+	_, err := validator(src, dest)
 	if err != nil {
 		return 0, err
 	}
+
+	srcCollection, err := Collector(src)
+	if err != nil {
+		return 0, err
+	}
+
+	fmt.Printf("%#v\n", srcCollection)
 
 	return 0, nil
 }
@@ -29,7 +36,7 @@ func main() {
 		log.Fatal(&Error{"\"src\" flag must be defined\n"})
 	}
 
-	_, err := copy(src, dest)
+	_, err := Copy(src, dest)
 
 	if err != nil {
 		log.Fatal(err)
@@ -39,5 +46,3 @@ func main() {
 }
 
 // copyer -src /path/src -dest /path/dest -offset 1024 -limit 2048
-
-// dest is dir
