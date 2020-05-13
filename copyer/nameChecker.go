@@ -3,14 +3,15 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-func concatName(path string) string {
-	fileBase := filepath.Base(path)
+func concatName(filePath string) (result string) {
+	fileBase := filepath.Base(filePath)
 	ext := filepath.Ext(fileBase)
 	fileBase = strings.TrimSuffix(fileBase, ext)
 
@@ -21,11 +22,12 @@ func concatName(path string) string {
 	}
 
 	if !alreadyInc {
-		return fileBase + "_01" + ext
+		result = fileBase + "_01" + ext
 	} else {
 		var formattedInc string
 		reg := regexp.MustCompile(`(_\d+)$`)
 		inc := fmt.Sprintf("%s", reg.Find([]byte(fileBase)))
+		fileBase = strings.TrimSuffix(fileBase, inc)
 		inc = strings.TrimPrefix(inc, "_")
 		incInt, err := strconv.Atoi(inc)
 
@@ -33,30 +35,32 @@ func concatName(path string) string {
 			panic(err)
 		}
 
-		if incInt <= 9 {
+		if incInt <= 8 {
 			formattedInc = "0" + strconv.Itoa(incInt+1)
 		} else {
 			formattedInc = strconv.Itoa(incInt + 1)
 		}
 
-		return fileBase + "_" + formattedInc + ext
+		result = fileBase + "_" + formattedInc + ext
 	}
+
+	return result
 }
 
-func setIncrementName(path string) (string, error) {
-	if _, err := os.Stat(path); err != nil {
+func setIncrementName(dest, filePath string) (string, error) {
+	if _, err := os.Stat(filePath); err != nil {
 		if os.IsNotExist(err) {
-			return path, nil
+			return path.Join(dest, filePath), nil
 		} else {
 			return "", err
 		}
 	}
 
-	return setIncrementName(concatName(path))
+	return setIncrementName(dest, concatName(filePath))
 }
 
-func NameChecker(path string) (string, error) {
-	checkedPath, err := setIncrementName(path)
+func NameChecker(dest, filePath string) (string, error) {
+	checkedPath, err := setIncrementName(dest, filepath.Base(filePath))
 
 	if err != nil {
 		return "", err

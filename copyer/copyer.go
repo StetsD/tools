@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"path/filepath"
 )
 
 var src, dest string
@@ -44,18 +43,15 @@ func Copy(src, dest string) (int64, error) {
 		dest = path.Join(wd, dest)
 	}
 
-	// Debug
-	fmt.Println(dest)
-	fmt.Printf("%#v\n", srcCollection)
-
 	for _, srcPath := range srcCollection {
 		fileSrc, _ := os.Open(srcPath)
-		fileDest, err := NameChecker(path.Join(dest, filepath.Base(srcPath)))
+		fileDest, err := NameChecker(dest, srcPath)
 
 		if err != nil {
 			fmt.Errorf("%s\n", err)
 			continue
 		}
+
 	}
 
 	return 0, nil
@@ -71,6 +67,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println(src, dest)
 }
