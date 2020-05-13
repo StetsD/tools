@@ -21,6 +21,7 @@ func validator(src, dest string) (int64, error) {
 		if k == "dest" && !fi.IsDir() {
 			log.Fatal(&Error{"dest must be a directory"})
 		}
+
 	}
 
 	return 0, nil

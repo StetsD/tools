@@ -4,13 +4,27 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"path"
+	"path/filepath"
 )
 
 var src, dest string
+var bytesWindow uint64
+var wd string
+
+const defaultBytesWindow = 1024
 
 func init() {
+	_, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	wd, _ = os.Getwd()
+
 	flag.StringVar(&src, "src", "", "path from")
-	flag.StringVar(&dest, "dest", "./", "path to")
+	flag.StringVar(&dest, "dest", wd, "path to")
+	flag.Uint64Var(&bytesWindow, "b", defaultBytesWindow, "window of bytes")
 	flag.Parse()
 }
 
@@ -26,7 +40,23 @@ func Copy(src, dest string) (int64, error) {
 		return 0, err
 	}
 
+	if !path.IsAbs(dest) {
+		dest = path.Join(wd, dest)
+	}
+
+	// Debug
+	fmt.Println(dest)
 	fmt.Printf("%#v\n", srcCollection)
+
+	for _, srcPath := range srcCollection {
+		fileSrc, _ := os.Open(srcPath)
+		fileDest, err := NameChecker(path.Join(dest, filepath.Base(srcPath)))
+
+		if err != nil {
+			fmt.Errorf("%s\n", err)
+			continue
+		}
+	}
 
 	return 0, nil
 }
@@ -44,5 +74,3 @@ func main() {
 
 	fmt.Println(src, dest)
 }
-
-// copyer -src /path/src -dest /path/dest -offset 1024 -limit 2048
