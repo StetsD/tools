@@ -6,7 +6,12 @@ import (
 	"path"
 )
 
-func collect(src string, collection *[]string) (err error) {
+type FileSrc struct {
+	path string
+	size int64
+}
+
+func collect(src string, collection *[]FileSrc) (err error) {
 	fi, err := os.Stat(src)
 
 	if err != nil {
@@ -31,7 +36,7 @@ func collect(src string, collection *[]string) (err error) {
 		}
 
 	case mode.IsRegular():
-		*collection = append(*collection, src)
+		*collection = append(*collection, FileSrc{src, fi.Size()})
 	default:
 		panic(&Error{"src path must be include only regular files and directories"})
 
@@ -40,7 +45,7 @@ func collect(src string, collection *[]string) (err error) {
 	return nil
 }
 
-func Collector(src string) (result []string, err error) {
+func Collector(src string) (result []FileSrc, err error) {
 	err = collect(src, &result)
 
 	if err != nil {

@@ -1,6 +1,8 @@
 ```
 #!/bin/bash
 
-copyer -src /path/src -dest /path/dest -b 1024 -limit 2048
+cd test-assets && mkdir test
+
+go run copyer -src ./test-assets/pic -dest ./test-assets/test -limit 10
 
 ```

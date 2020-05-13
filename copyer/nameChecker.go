@@ -48,7 +48,7 @@ func concatName(filePath string) (result string) {
 }
 
 func setIncrementName(dest, filePath string) (string, error) {
-	if _, err := os.Stat(filePath); err != nil {
+	if _, err := os.Stat(path.Join(dest, filePath)); err != nil {
 		if os.IsNotExist(err) {
 			return path.Join(dest, filePath), nil
 		} else {
