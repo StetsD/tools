@@ -1,4 +1,4 @@
-package main
+package copyer
 
 import (
 	"io/ioutil"

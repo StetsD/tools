@@ -1,4 +1,4 @@
-package main
+package copyer
 
 type Error struct {
 	err string

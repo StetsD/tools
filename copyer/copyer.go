@@ -1,7 +1,6 @@
-package main
+package copyer
 
 import (
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -9,8 +8,6 @@ import (
 	"path"
 )
 
-var src, dest string
-var bytesLimit int
 var wd string
 
 func init() {
@@ -19,14 +16,9 @@ func init() {
 		log.Fatal(err)
 	}
 	wd, _ = os.Getwd()
-
-	flag.StringVar(&src, "src", "", "path from")
-	flag.StringVar(&dest, "dest", wd, "path to")
-	flag.IntVar(&bytesLimit, "limit", 0, "limit of bytes for other file")
-	flag.Parse()
 }
 
-func Copy(src, dest string) (int64, error) {
+func Copy(src, dest string, bytesLimit int) (int64, error) {
 	var totalSizeOfBytes int64
 	writtenBytes := make(chan int)
 	doneChan := make(chan bool)
@@ -61,14 +53,16 @@ func Copy(src, dest string) (int64, error) {
 		fileDestPath, err := NameChecker(dest, srcPath.path)
 
 		if err != nil {
-			fmt.Errorf("%s\n", err)
+			err := fmt.Errorf("%s\n", err)
+			fmt.Println(err.Error())
 			continue
 		}
 
 		fileDest, err := os.Create(fileDestPath)
 
 		if err != nil {
-			fmt.Errorf("%s\n", err)
+			err := fmt.Errorf("%s\n", err)
+			fmt.Println(err.Error())
 			continue
 		}
 
@@ -114,16 +108,4 @@ func Copy(src, dest string) (int64, error) {
 	doneChan <- true
 	close(writtenBytes)
 	return 0, nil
-}
-
-func main() {
-	//if src == "" {
-	//	log.Fatal(&Error{"\"src\" flag must be defined\n"})
-	//}
-
-	_, err := Copy(src, dest)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 }
