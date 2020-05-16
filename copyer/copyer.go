@@ -117,9 +117,9 @@ func Copy(src, dest string) (int64, error) {
 }
 
 func main() {
-	if src == "" {
-		log.Fatal(&Error{"\"src\" flag must be defined\n"})
-	}
+	//if src == "" {
+	//	log.Fatal(&Error{"\"src\" flag must be defined\n"})
+	//}
 
 	_, err := Copy(src, dest)
 

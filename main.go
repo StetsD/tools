@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "tools/tools/cmd"
+import "tools/cmd"
 
 func main() {
 	cmd.Execute()
