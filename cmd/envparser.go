@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
-	"os"
+	"log"
+	"tools/envparser"
 )
 
 var file string
@@ -24,7 +24,16 @@ DESCRIPTION
 		path to file
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(os.Environ())
+		if file == "" {
+			log.Fatal("\"file\" flag must be defined\n")
+		}
+
+		envs, err := envparser.Parse(file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		envparser.Apply(envs)
+
 	},
 }
 
